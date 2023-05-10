@@ -1,9 +1,11 @@
+import os
+
 import numpy as np
 import pandas as pd
-from utils import encode
-import os
-from tqdm import tqdm
 import tensorflow as tf
+from tqdm import tqdm
+
+from utils import encode
 
 # Metrics for original model
 
@@ -26,7 +28,7 @@ def read_files_from_csv(path):
 
 x_test, y_test = read_files_from_csv('test.csv')
 
-model = tf.keras.models.load_model('model.h5')
+model = tf.keras.models.load_model('checkpoints/model.h5')
 
 x_test = x_test.reshape(x_test.shape[0], 1, 200, 1)
 

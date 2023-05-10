@@ -1,7 +1,7 @@
 import tensorflow as tf
 
-# model = tf.keras.models.load_model('checkpoints/model.h5')
-model = tf.keras.models.load_model('model.h5')
+model = tf.keras.models.load_model('checkpoints/model.h5')
+# model = tf.keras.models.load_model('model.h5')
 converter = tf.lite.TFLiteConverter.from_keras_model(model)
 converter.allow_custom_ops = True
 converter.experimental_new_converter = True

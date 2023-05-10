@@ -1,8 +1,10 @@
+import os
+
 import numpy as np
 import pandas as pd
-from tqdm import tqdm
-import os
 import tensorflow as tf
+from tqdm import tqdm
+
 from utils import encode
 
 # Metrics for TFLite Model
@@ -25,9 +27,6 @@ def read_files_from_csv(path):
 
 x_test, y_test = read_files_from_csv('test.csv')
 
-print('\n:::::', x_test.shape, '\n')
-
-
 
 interpreter = tf.lite.Interpreter('converted_model.tflite')
 interpreter.allocate_tensors()
@@ -39,39 +38,24 @@ print(input_details)
 
 outputs_lite = []
 
-for i in range(x_test.shape[0]):
+for i in tqdm(range(x_test.shape[0])):
     input_data = tf.constant(x_test[i].reshape(1,1,200,1), dtype=tf.float32)
-
-    # print('input details= ', input_details)
-
     interpreter.set_tensor(input_details[0]['index'], input_data)
 
     interpreter.invoke()
-
-    # # The function `get_tensor()` returns a copy of the tensor data.
-    # # Use `tensor()` in order to get a pointer to the tensor.
     output_data = interpreter.get_tensor(output_details[0]['index'])
-    
-    outputs_lite.append(output_data)
-
-
-
-
-#TODO
         
-for i in range(output_data.shape[0]):
-    for j in range(output_data.shape[1]):
-        output_data[i,j,:] = np.argmax(output_data[i,j,:])
+    outputs_lite.append(output_data)
+    
+outputs_lite = np.vstack(outputs_lite)
+        
+for i in range(outputs_lite.shape[0]):
+    for j in range(outputs_lite.shape[1]):
+        outputs_lite[i,j,:] = np.argmax(outputs_lite[i,j,:])
         y_test[i,j,:] = np.argmax(y_test[i,j,:])
         
-output = output[:,:,0].reshape(output.shape[0], output.shape[1])
+outputs_lite = outputs_lite[:,:,0].reshape(outputs_lite.shape[0], outputs_lite.shape[1])
 y_test = y_test[:,:,0].reshape(y_test.shape[0], y_test.shape[1])
-
-#TODO
-
-
-
-
 
 results = np.equal(outputs_lite, y_test)
 
