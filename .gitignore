@@ -1,8 +1,0 @@
-**/__pycache__/
-inputs
-outputs
-checkpoints
-qt-database-1.0.0
-**.h5
-**.tflite
-**.csv
